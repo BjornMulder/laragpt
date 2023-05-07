@@ -38,7 +38,7 @@ class Compare extends Component
             ],
         ];
 
-        $chat = Chat::firstOrCreate(['session_id' => session()->getId()]);
+        $chat = Chat::firstOrCreate(['title' => session()->getId()]);
 
         $chatGptPrompt = $chat->chatGptPrompts()->create([
             'prompt' => $this->inputText,

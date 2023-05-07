@@ -14,7 +14,6 @@ public function up()
     Schema::create('chats', function (Blueprint $table) {
         $table->id();
         $table->string('title')->nullable();
-        $table->string('session_id');
         $table->text('description')->nullable();
         $table->timestamps();
     });
