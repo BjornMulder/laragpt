@@ -14,9 +14,32 @@ class ChatInterface extends Component
     public $inputText = '';
     public $messages = [];
     public $charCount = 0;
+    public $selectedChat = null;
+    public $newChatName = null;
+    public $chatList = [];
 
     public function mount()
     {
+        $this->selectedChat = Chat::latest()->first();
+
+        $this->loadChatList();
+    }
+
+    public function loadChatList()
+    {
+        $this->chatList = Chat::select('title')->get()->pluck('title')->toArray();
+    }
+
+    public function selectChat($chatTitle = null)
+    {
+        if ($chatTitle) {
+            $this->selectedChat = Chat::where('title', $chatTitle)->firstOrCreate();
+        } elseif ($this->newChatName) {
+            $this->selectedChat = Chat::where('title', $this->newChatName)->firstOrCreate(['title' => $this->newChatName]);
+            $this->newChatName = null;
+        }
+
+        $this->loadChatList();
         $this->loadMessages();
     }
 
@@ -26,7 +49,7 @@ class ChatInterface extends Component
             return;
         }
 
-        $chat = Chat::firstOrCreate(['session_id' => session()->getId()]);
+        $chat = $this->selectedChat ?: Chat::firstOrCreate(['title' => $this->selectedChat]);
 
         $chatGptPrompt = $chat->chatGptPrompts()->create([
             'prompt' => $this->inputText,
@@ -152,7 +175,7 @@ class ChatInterface extends Component
 
     public function loadMessages()
     {
-        $chat = Chat::where('session_id', session()->getId())->first();
+        $chat = $this->selectedChat ?: Chat::where('title', $this->selectedChat)->first();
 
         if (!$chat) {
             return;

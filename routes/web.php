@@ -22,9 +22,19 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+
+    Route::get('/chat', function () {
+        return view('chat');
+    })->name('chat');
+
+    Route::get('/compare', function () {
+        return view('compare');
+    })->name('compare');
+
+    Route::get('/image', function () {
+        return view('image');
+    })->name('image');
+
+    Route::post('/chat-gpt', 'App\Http\Controllers\ChatGPTController@generateResponse')->name('chat-gpt.generate');
 });
 
-Route::post('/chat-gpt', 'App\Http\Controllers\ChatGPTController@generateResponse')->name('chat-gpt.generate');
